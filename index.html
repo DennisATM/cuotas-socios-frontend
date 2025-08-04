@@ -21,11 +21,28 @@
   <section class="bg-light mt-3">
     <h2>Registrar Pago</h2>
     <div class="row justify-content-between">
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-4">
             <select class="form-control" id="selectSocio"></select>
         </div>
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-4">
             <input type="number" class="form-control" id="montoPago" placeholder="Monto del pago">
+        </div>
+        <div class="col-12 col-md-4">
+            <select class="form-control" id="mesPago">
+                <option value="">Mes</option>
+                <option value="1">Enero</option>
+                <option value="2">Febrero</option>
+                <option value="3">Marzo</option>
+                <option value="4">Abril</option>
+                <option value="5">Mayo</option>
+                <option value="6">Junio</option>
+                <option value="7">Julio</option>
+                <option value="8">Agosto</option>
+                <option value="9">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+            </select>
         </div>
     </div>
     <button class="btn btn-danger" id="btnRegistrarPago">Registrar Pago</button>
@@ -35,7 +52,7 @@
   <section class="bg-light mt-3">
     <h2 class="text-secondary">Reportes</h2>
     <p>Total en caja: <strong class="text-danger" id="totalCaja">$0</strong></p>
-    <table id="tablaReporte" class="table table-striped text-center">
+    <!-- <table id="tablaReporte" class="table table-striped text-center">
       <thead>
         <tr class="text-center bg-success">
           <th>Socio</th>
@@ -43,7 +60,8 @@
         </tr>
       </thead>
       <tbody></tbody>
-    </table>
+    </table> -->
+    <div id="reporteCuotas"></div>
   </section>
 
   <!-- Sección: Pagos por socio -->
@@ -51,6 +69,28 @@
     <h2 class="text-tertiary">Pagos por Socio</h2>
     <ul id="listaPagos"></ul>
   </section>
+
+<!-- Sección: Reporte general anual -->
+<section class="bg-light mt-3">
+  <h2 class="text-success">Reporte General Anual</h2>
+  <input class="form-control" type="number" id="anioReporte" value="2025" style="width:80px">
+  <button class="btn btn-warning" id="btnReporteAnual">Generar Reporte</button>
+
+  <table id="tablaReporteAnual" class="table table-striped text-center mt-3">
+    <thead>
+      <tr>
+        <th>Socio</th>
+        <th>Pagados</th>
+        <th>Pendientes</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+
+
 
   <script src="app.js"></script>
 </body>
