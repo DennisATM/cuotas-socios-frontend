@@ -140,7 +140,7 @@ document.getElementById("btnRegistrarPago").addEventListener("click", async () =
   const mes = document.getElementById("mesPago").value;
   const anio = document.getElementById("anioPago").value;
 
-  if (!socio_id || !monto || !mes || !anio) {
+  if (!socio_id || !monto || !mes ) {
     return alert("Complete todos los campos del pago");
   }
 
