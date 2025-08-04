@@ -1,5 +1,5 @@
 // // 🔹 Cambia esta URL por la de tu API en Render
-// const API_URL = "https://cuotas-socios.onrender.com";
+const API_URL = "https://cuotas-socios.onrender.com";
 
 // // ---------- Funciones de Socios ----------
 // async function cargarSocios() {
