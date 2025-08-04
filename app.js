@@ -58,7 +58,7 @@ document.getElementById("btnRegistrarPago").addEventListener("click", async () =
 async function cargarReporteTotal() {
   const res = await fetch(`${API_URL}/reportes/total`);
   const data = await res.json();
-  document.getElementById("totalCaja").textContent = `$${data.total}`;
+  document.getElementById("totalCaja").textContent = `$${Math.trunc(data.total)}`;
 }
 
 async function cargarReporteSocios() {
@@ -69,7 +69,7 @@ async function cargarReporteSocios() {
   tbody.innerHTML = "";
   data.forEach(r => {
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${r.nombre}</td><td>$${r.total_pagado}</td>`;
+    tr.innerHTML = `<td>${r.nombre}</td><td>$${Math.trunc(r.total_pagado)}</td>`;
     tbody.appendChild(tr);
   });
 }
@@ -84,7 +84,7 @@ async function cargarPagosPorSocio(socio_id) {
   pagos.forEach(p => {
     const li = document.createElement("li");
     fecha = new Date(p.fecha).toLocaleDateString("es-ES");
-    li.textContent = `Pago $${p.monto} - ${fecha}`;
+    li.textContent = `Pago $${Math.trunc(p.monto)} - ${fecha}`;
     lista.appendChild(li);
   });
 }
