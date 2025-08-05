@@ -57,24 +57,24 @@ const API_URL = "https://cuotas-socios.onrender.com";
 // });
 
 // // ---------- Reportes ----------
-// async function cargarReporteTotal() {
-//   const res = await fetch(`${API_URL}/reportes/total`);
-//   const data = await res.json();
-//   document.getElementById("totalCaja").textContent = `$${Math.round(data.total)}`;
-// }
+async function cargarReporteTotal() {
+  const res = await fetch(`${API_URL}/reportes/total`);
+  const data = await res.json();
+  document.getElementById("totalCaja").textContent = `$${Math.round(data.total)}`;
+}
 
-// async function cargarReporteSocios() {
-//   const res = await fetch(`${API_URL}/reportes/socios`);
-//   const data = await res.json();
+async function cargarReporteSocios() {
+  const res = await fetch(`${API_URL}/reportes/socios`);
+  const data = await res.json();
 
-//   const tbody = document.querySelector("#tablaReporte tbody");
-//   tbody.innerHTML = "";
-//   data.forEach(r => {
-//     const tr = document.createElement("tr");
-//     tr.innerHTML = `<td>${r.nombre}</td><td>$${Math.round(r.total_pagado)}</td>`;
-//     tbody.appendChild(tr);
-//   });
-// }
+  const tbody = document.querySelector("#tablaReporte tbody");
+  tbody.innerHTML = "";
+  data.forEach(r => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${r.nombre}</td><td>$${Math.round(r.total_pagado)}</td>`;
+    tbody.appendChild(tr);
+  });
+}
 
 // // ---------- Pagos por socio ----------
 // async function cargarPagosPorSocio(socio_id) {
