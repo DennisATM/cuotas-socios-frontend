@@ -138,6 +138,8 @@ let chartMensual = null;
 
 document.getElementById("btnReporteMensual").addEventListener("click", () => {
   const anio = document.getElementById("anioMensual").value;
+  if (!anio) return alert("Ingrese un año válido");
+  document.getElementById("btnExportarPDF").disabled = false;
   cargarReporteMensual(anio);
 });
 
@@ -186,6 +188,38 @@ async function cargarReporteMensual(anio) {
     }
   });
 }
+
+document.getElementById("btnExportarPDF").addEventListener("click", async () => {
+  
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const anio = document.getElementById("anioMensual").value;
+  doc.setFontSize(10);
+  doc.text(`Reporte mensual de recaudación - ${anio}`, 10, 15);
+
+  document.getElementById("btnExportarPDF").disabled = true;
+  // Capturar tabla
+  const tabla = document.getElementById("tablaReporteMensual");
+  
+  const canvasTabla = await html2canvas(tabla);
+  const imgTabla = canvasTabla.toDataURL("image/png");
+
+  doc.addImage(imgTabla, "PNG", 10, 25, 40, 80); // ancho automático
+
+  // Capturar gráfico
+  const grafico = document.getElementById("graficoMensual");
+  const canvasGrafico = await html2canvas(grafico);
+  const imgGrafico = canvasGrafico.toDataURL("image/png");
+
+  // doc.addPage();
+  doc.text("Gráfico de recaudación mensual", 90, 15);
+  doc.addImage(imgGrafico, "PNG", 80, 25, 80, 40);
+
+  // Descargar
+  doc.save(`reporte_mensual_${anio}.pdf`);
+  
+});
 
 
 // // Cambiar lista de pagos al cambiar socio
