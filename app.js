@@ -124,7 +124,8 @@ const eliminarSocio = async (id) => {
 
   if (res.ok) {
     alert(data.mensaje);
-    cargarSocios(); // refrescar lista
+    cargarReporteTotal(); // refrescar lista
+    cargarReporteSocios();
   } else {
     alert(data.error || "Error al eliminar socio");
   }
