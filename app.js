@@ -217,3 +217,5 @@ async function cargarReporteAnual(anio) {
 
 // Inicial
 cargarSocios();
+cargarReporteTotal();
+cargarReporteSocios();
