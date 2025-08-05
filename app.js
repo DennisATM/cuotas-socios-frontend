@@ -71,7 +71,7 @@ async function cargarReporteSocios() {
   tbody.innerHTML = "";
   data.forEach(r => {
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${r.nombre}</td><td>$${Math.round(r.total_pagado)}</td>`;
+    tr.innerHTML = `<td>${r.nombre}</td><td>$${Math.round(r.total_pagado)}</td><td><button class="btn btn-primary btn-sm" onclick="">Ver Pagos</button></td>`;
     tbody.appendChild(tr);
   });
 }
