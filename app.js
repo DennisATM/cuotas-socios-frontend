@@ -124,11 +124,13 @@ const eliminarSocio = async (id) => {
 
   if (res.ok) {
     alert(data.mensaje);
+      cargarReporteTotal(); // refrescar lista
+      cargarReporteSocios();
   } else {
     alert(data.error || "Error al eliminar socio");
+      cargarReporteTotal();
+      cargarReporteSocios();
   }
-  cargarReporteTotal(); // refrescar lista
-  cargarReporteSocios();
 }
 
 
@@ -147,8 +149,8 @@ async function cargarPagosPorSocio(socio_id,nombre) {
   ];
   pagos.forEach(p => {
     const tr = document.createElement("tr");
-    fecha = new Date(p.fecha).toLocaleDateString("es-ES");
-    tr.innerHTML = `<td> $${Math.round(p.monto)}</td><td>${arrayMeses[p.mes+1]}<td>${p.anio}</td><td> ${fecha}</td>`;
+    fecha = new Date(p.mes).toLocaleDateString("es-ES");
+    tr.innerHTML = `<td> $${Math.round(p.monto)}</td><td>${arrayMeses[p.mes-1]}<td>${p.anio}</td><td> ${fecha}</td>`;
     lista.appendChild(tr);
   });
 }
@@ -240,7 +242,6 @@ document.getElementById("btnExportarPDF").addEventListener("click", async () => 
   doc.save(`reporte_mensual_${anio}.pdf`);
   
 });
-
 
 cargarReporteTotal();
 cargarReporteSocios();
