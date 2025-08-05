@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestión de Cuotas de Socios</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -115,7 +116,7 @@
       </table>
     </div>
     <div class="col-12 col-md-8">
-      <canvas id="graficoMensual" style="margin-top:20px; max-height:300px;"></canvas>
+      <canvas style="font-size: 0.7rem;" id="graficoMensual" style="margin-top:20px; max-height:300px;"></canvas>
     </div>
   </div>
 
@@ -127,7 +128,7 @@
 
 
 <!-- Modal para agregar pago -->
-<div id="modalAddPay" class="modal" tabindex="-1">
+<div id="modalAddPay" class="modal" tabindex="-4">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -177,7 +178,7 @@
 </div>
 
 <!-- Modal para listar pagos -->
-<div id="modalListPay" class="modal" tabindex="-1">
+<div id="modalListPay" class="modal" tabindex="-4">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
