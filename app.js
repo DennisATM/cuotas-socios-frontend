@@ -1,28 +1,8 @@
-// // 🔹 Cambia esta URL por la de tu API en Render
+// 🔹 Cambia esta URL por la de tu API en Render
 const API_URL = "https://cuotas-socios.onrender.com";
 
-// // ---------- Funciones de Socios ----------
-// async function cargarSocios() {
-//   const res = await fetch(`${API_URL}/socios`);
-//   const socios = await res.json();
 
-//   // Llenar el select de pagos
-//   const select = document.getElementById("selectSocio");
-//   select.innerHTML = "";
-//   socios.forEach(s => {
-//     const option = document.createElement("option");
-//     option.value = s.id;
-//     option.textContent = `${s.id} - ${s.nombre}`;
-//     select.appendChild(option);
-//   });
-
-//   // Actualizar reportes
-//   if (socios.length > 0) {
-//     cargarReporteSocios();
-//   }
-// }
-
-// // Agregar socio
+// Agregar socio
 document.getElementById("btnAgregarSocio").addEventListener("click", async () => {
   const nombre = document.getElementById("nombreSocio").value.trim();
   if (!nombre) return alert("Ingrese un nombre");
@@ -38,9 +18,7 @@ document.getElementById("btnAgregarSocio").addEventListener("click", async () =>
   cargarReporteSocios();
 });
 
-
-
-// // ---------- Funciones de Pagos ----------
+// ---------- Funciones de Pagos ----------
 document.getElementById("btnPagoSocio").addEventListener("click", async () => {
   const socio_id = document.getElementById("idSocioPago").value;
   const monto = document.getElementById("montoPago").value;
@@ -49,6 +27,10 @@ document.getElementById("btnPagoSocio").addEventListener("click", async () => {
 
   if (!mes || !anio || !monto) return alert("Seleccione monto válido, mes y año");
 
+  if(Number(anio)<2020 || Number(anio)>2030) return alert("El año ingresado no es válido, debe ser un número entre 2020 y 2030");
+
+  if(Number(monto)<0 || isNaN(Number(monto))) return alert('El monto debe ser un número mayor que cero');
+  
   await fetch(`${API_URL}/pagos`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -69,7 +51,47 @@ document.getElementById("btnPagoSocio").addEventListener("click", async () => {
 
 });
 
-// // ---------- Reportes ----------
+document.getElementById("btnActualizarPagoSocio").addEventListener("click", async () => {
+  
+  const id = document.getElementById('editIdPago').value;
+  const socio_id = document.getElementById("editIdSocioPago").value;
+  const monto = document.getElementById("editMontoPago").value;
+  const mes =  document.getElementById("editMesPago").value;
+  const anio = document.getElementById("editAnioPago").value;
+  if(Number(anio)<2020 || Number(anio)>2030) return alert('Entrada de año no válida, debe estár entre 2020 y 2030');
+  
+  if(Number(monto) < 0 || isNaN(Number(monto))) return alert('El monto debe ser un número positivo');
+
+  await fetch(`${API_URL}/pagos/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ socio_id, monto, mes, anio })  
+  }).then(res => {
+    if (!res.ok) {
+      return res.json().then(err => alert(err.error));
+    }else{
+      alert("Pago actualizado correctamente");
+    }
+  });
+
+  document.getElementById("editMontoPago").value = "";
+  document.getElementById("editMesPago").value = "";
+  document.getElementById("editAnioPago").value = "2025";
+  cargarReporteTotal();
+  cargarReporteSocios();
+
+})
+
+const abrirModalEditarCuota = async (id, socio_id, mes, anio, cuota) => {
+  console.log(await id, socio_id, mes, anio, cuota);
+  document.getElementById('editIdSocioPago').value = socio_id;
+  document.getElementById('editIdPago').value = id;
+  document.getElementById('editMontoPago').value = cuota;
+  document.getElementById('editMesPago').value = mes;
+  document.getElementById('editAnioPago').value = anio;
+}
+
+// ---------- Reportes ----------
 async function cargarReporteTotal() {
   const res = await fetch(`${API_URL}/reportes/total`);
   const data = await res.json();
@@ -77,7 +99,6 @@ async function cargarReporteTotal() {
 }
 
 const cargarModal = async (id,nombre) => {
-  console.log(nombre);
   document.getElementById("idSocioPago").value = id;  
   document.getElementById("nombrePago").value = await nombre;
 }
@@ -115,6 +136,24 @@ async function cargarReporteSocios() {
   });
 }
 
+// Función para eliminar pago
+const eliminarPago = async (id) => {
+  if (!confirm("¿Seguro que deseas eliminar este pago?")) return;
+
+  const res = await fetch(`${API_URL}/pagos/${id}`, { method: "DELETE" });
+  const data = await res.json();
+
+  if (res.ok) {
+    alert(data.mensaje);
+      cargarReporteTotal(); // refrescar lista
+      cargarReporteSocios();
+  } else {
+    alert(data.error || "Error al eliminar pago");
+      cargarReporteTotal();
+      cargarReporteSocios();
+  }
+}
+
 // Función para eliminar socio
 const eliminarSocio = async (id) => {
   if (!confirm("¿Seguro que deseas eliminar este socio y todos sus pagos?")) return;
@@ -133,7 +172,6 @@ const eliminarSocio = async (id) => {
   }
 }
 
-
 // ---------- Pagos por socio ----------
 async function cargarPagosPorSocio(socio_id,nombre) {
   const res = await fetch(`${API_URL}/pagos/${socio_id}`);
@@ -150,7 +188,22 @@ async function cargarPagosPorSocio(socio_id,nombre) {
   pagos.forEach(p => {
     const tr = document.createElement("tr");
     fecha = new Date(p.fecha).toLocaleDateString("es-ES");
-    tr.innerHTML = `<td> $${Math.round(p.monto)}</td><td>${arrayMeses[p.mes-1]}<td>${p.anio}</td><td> ${fecha}</td>`;
+    tr.innerHTML = `
+                    <td> $${Math.round(p.monto)}</td>
+                    <td>${arrayMeses[p.mes-1]}</td>
+                    <td>${p.anio}</td>
+                    <td> ${fecha}</td>
+                    <td> 
+                      <button id="btnEditarCuota" data-bs-toggle="modal" data-bs-target="#modalEditPay" onclick="abrirModalEditarCuota(${p.id}, ${p.socio_id}, ${p.mes},${p.anio}, ${p.monto})" type="button" class="btn btn-warning m-0 p-1">
+                        <i class="bi bi-pencil-fill"></i>
+                      </button>
+                    </td>
+                    <td>
+                      <button id="btnEditarCuota" data-bs-toggle="modal" data-bs-target="#modalDeletePay" onclick="eliminarPago(${p.id})" type="button" class="btn btn-danger m-0 p-1">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </td>
+                    `;
     lista.appendChild(tr);
   });
 }
@@ -211,6 +264,7 @@ async function cargarReporteMensual(anio) {
   });
 }
 
+// Exportar reporte mensual a PDF
 document.getElementById("btnExportarPDF").addEventListener("click", async () => {
   
   const { jsPDF } = window.jspdf;
@@ -243,5 +297,6 @@ document.getElementById("btnExportarPDF").addEventListener("click", async () => 
   
 });
 
+// Cargar reportes al inicio
 cargarReporteTotal();
 cargarReporteSocios();
