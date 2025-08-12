@@ -56,8 +56,14 @@ const imprimirPdf =  async () =>{
   // --- Aquí empieza la generación del PDF ---
   let data = JSON.parse(document.getElementById('dataObject').value);
   let anio = document.getElementById('anio').value;
-  let totalMes = document.getElementById('totalMes').value;
+  let pagoMes = document.getElementById('totalMes').value;
+  let totalMes = pagoMes.split(',');
+
   let totalGeneral = document.getElementById('totalGeneral').value;
+
+  console.log(data);
+  console.log(totalMes[0]);
+  console.log(totalGeneral)
 
   // Crear instancia de jsPDF
   const { jsPDF } = window.jspdf;
@@ -98,7 +104,6 @@ const imprimirPdf =  async () =>{
   }
   
   totalRow.total_socio = totalGeneral;
-  
 
   // Agregar título
   doc.setFontSize(14);
@@ -127,7 +132,7 @@ const imprimirPdf =  async () =>{
     10: { halign: 'right' },
     11: { halign: 'right' },
     12: { halign: 'right' },
-    total_socio: { halign: 'right' }
+    total_socio: { halign: 'right', fontStyle: 'bold'},
   }
   });
 
