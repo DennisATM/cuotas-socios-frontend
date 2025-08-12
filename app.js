@@ -1,6 +1,125 @@
 // 🔹 Cambia esta URL por la de tu API en Render
 const API_URL = "https://cuotas-socios.onrender.com";
 
+document.getElementById('btnRepoAnual').addEventListener("click", async ()=>{
+  anio=document.getElementById('anioMensual').value;
+  document.getElementById('tituloListaPagosAnual').innerHTML=`Reporte Anual por socio/mes del año ${anio}`;
+  
+  fetch(`${API_URL}/reporte-pagos/${anio}`)
+    .then(res => res.json())
+    .then(data => {
+      let totalMes = Array(12).fill(0);
+      let totalGeneral = 0;
+      let html = "";
+    
+      data.forEach(row => {
+        html += `<tr>
+                <td scope="col-2" class="text-primary bg-light">${row.socio}</td>`;
+                  for (let i = 0; i < 12; i++) {
+                    const mesValue = Object.values(row)[i + 1] || 0;
+                    totalMes[i] += Number(mesValue);
+
+                    html += `<td>${Math.round(mesValue)}</td>`;
+                  }
+                  html += `<td class="fw-bold">${Math.round(row.total_socio)}</td>`;
+                  totalGeneral += Number(row.total_socio);
+                  html += `</tr>`;
+                });
+
+      // Fila de totales
+      html += `
+        <td class="fw-bold text-danger">Total Mes</td>`;
+        console.log(totalMes)
+      totalMes.forEach(t => {
+        html += `<td class="fw-bold text-danger">${t}</td>`;
+      });
+      html += `<td class="fw-bold text-danger">${totalGeneral}</td>`;
+
+      document.getElementById("reporte").innerHTML = html;
+
+      imprimirPdf(data, anio, totalMes, totalGeneral);
+    });
+});
+
+
+const imprimirPdf =  async (data , anio, totalMes, totalGeneral) =>{
+  // --- Aquí empieza la generación del PDF ---
+  
+  // Crear instancia de jsPDF
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // Definir columnas: Socio + 12 meses + Total
+  const columns = [
+    { header: 'Socio', dataKey: 'socio' },
+    { header: 'Ene', dataKey: '1' },
+    { header: 'Feb', dataKey: '2' },
+    { header: 'Mar', dataKey: '3' },
+    { header: 'Abr', dataKey: '4' },
+    { header: 'May', dataKey: '5' },
+    { header: 'Jun', dataKey: '6' },
+    { header: 'Jul', dataKey: '7' },
+    { header: 'Ago', dataKey: '8' },
+    { header: 'Sep', dataKey: '9' },
+    { header: 'Oct', dataKey: '10' },
+    { header: 'Nov', dataKey: '11' },
+    { header: 'Dic', dataKey: '12' },
+    { header: 'Total', dataKey: 'total_socio' },
+  ];
+
+  // Preparar datos para jsPDF autoTable
+  const rows = data.map(row => {
+    let obj = { socio: row.socio };
+    for (let i = 1; i <= 12; i++) {
+      obj[i] = Math.round(row[`mes${i}`]) || Math.round(Object.values(row)[i]) || 0;
+    }
+    obj.total_socio = Math.round(row.total_socio);
+    return obj;
+  });
+
+  // Agregar fila total mes al final
+  let totalRow = { socio: "Total Mes" };
+  for (let i = 0; i < 12; i++) {
+    totalRow[i + 1] = totalMes[i];
+  }
+  totalRow.total_socio = totalGeneral;
+  // rows.push(totalRow);
+
+  // Agregar título
+  doc.setFontSize(14);
+  doc.text(`Reporte Anual por socio/mes del año ${anio}`, 14, 20);
+
+  // Crear tabla
+  doc.autoTable({
+    startY: 30,
+    columns: columns,
+    body: rows,
+    styles: { fontSize: 8 },
+    headStyles: { fillColor: [22, 160, 133] }, // verde azulado
+    footStyles: { fillColor: [231, 76, 60] },  // rojo para totales
+    foot: [totalRow],
+    columnStyles: {
+    socio: { halign: 'left' }, // primera columna texto
+    1: { halign: 'right' },
+    2: { halign: 'right' },
+    3: { halign: 'right' },
+    4: { halign: 'right' },
+    5: { halign: 'right' },
+    6: { halign: 'right' },
+    7: { halign: 'right' },
+    8: { halign: 'right' },
+    9: { halign: 'right' },
+    10: { halign: 'right' },
+    11: { halign: 'right' },
+    12: { halign: 'right' },
+    total_socio: { halign: 'right' }
+  }
+  });
+
+  // Descargar PDF
+  doc.save(`reporte_pagos_${anio}.pdf`);
+
+};
 
 // Agregar socio
 document.getElementById("btnAgregarSocio").addEventListener("click", async () => {
@@ -58,6 +177,7 @@ document.getElementById("btnActualizarPagoSocio").addEventListener("click", asyn
   const monto = document.getElementById("editMontoPago").value;
   const mes =  document.getElementById("editMesPago").value;
   const anio = document.getElementById("editAnioPago").value;
+  
   if(Number(anio)<2020 || Number(anio)>2030) return alert('Entrada de año no válida, debe estár entre 2020 y 2030');
   
   if(Number(monto) < 0 || isNaN(Number(monto))) return alert('El monto debe ser un número positivo');
@@ -136,24 +256,6 @@ async function cargarReporteSocios() {
   });
 }
 
-// Función para eliminar pago
-const eliminarPago = async (id) => {
-  if (!confirm("¿Seguro que deseas eliminar este pago?")) return;
-
-  const res = await fetch(`${API_URL}/pagos/${id}`, { method: "DELETE" });
-  const data = await res.json();
-
-  if (res.ok) {
-    alert(data.mensaje);
-      cargarReporteTotal(); // refrescar lista
-      cargarReporteSocios();
-  } else {
-    alert(data.error || "Error al eliminar pago");
-      cargarReporteTotal();
-      cargarReporteSocios();
-  }
-}
-
 // Función para eliminar socio
 const eliminarSocio = async (id) => {
   if (!confirm("¿Seguro que deseas eliminar este socio y todos sus pagos?")) return;
@@ -217,6 +319,7 @@ document.getElementById("btnReporteMensual").addEventListener("click", () => {
   document.getElementById("btnExportarPDF").disabled = false;
   cargarReporteMensual(anio);
 });
+
 
 async function cargarReporteMensual(anio) {
   const res = await fetch(`${API_URL}/reporte-mensual/${anio}`);
