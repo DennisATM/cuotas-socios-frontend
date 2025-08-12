@@ -4,7 +4,7 @@ const API_URL = "https://cuotas-socios.onrender.com";
 document.getElementById('btnRepoAnual').addEventListener("click", async ()=>{
   anio=document.getElementById('anioMensual').value;
   document.getElementById('tituloListaPagosAnual').innerHTML=`Reporte Anual por socio/mes del año ${anio}`;
-  
+
   fetch(`${API_URL}/reporte-pagos/${anio}`)
     .then(res => res.json())
     .then(data => {
@@ -29,7 +29,7 @@ document.getElementById('btnRepoAnual').addEventListener("click", async ()=>{
       // Fila de totales
       html += `
         <td class="fw-bold text-danger">Total Mes</td>`;
-        console.log(totalMes)
+    
       totalMes.forEach(t => {
         html += `<td class="fw-bold text-danger">${t}</td>`;
       });
@@ -37,14 +37,28 @@ document.getElementById('btnRepoAnual').addEventListener("click", async ()=>{
 
       document.getElementById("reporte").innerHTML = html;
 
-      imprimirPdf(data, anio, totalMes, totalGeneral);
+      // imprimirPdf(data, anio, totalMes, totalGeneral);
+      document.getElementById('dataObject').value = JSON.stringify(data);
+      document.getElementById('anio').value = anio;
+      document.getElementById('totalMes').value = totalMes;
+      document.getElementById('totalGeneral').value = totalGeneral;
+    
     });
-});
+    
+  });
 
+document.getElementById('btnPdf').addEventListener("click", () =>{
+  imprimirPdf();
+})
 
-const imprimirPdf =  async (data , anio, totalMes, totalGeneral) =>{
-  // --- Aquí empieza la generación del PDF ---
+const imprimirPdf =  async () =>{
   
+  // --- Aquí empieza la generación del PDF ---
+  let data = JSON.parse(document.getElementById('dataObject').value);
+  let anio = document.getElementById('anio').value;
+  let totalMes = document.getElementById('totalMes').value;
+  let totalGeneral = document.getElementById('totalGeneral').value;
+
   // Crear instancia de jsPDF
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
@@ -82,8 +96,9 @@ const imprimirPdf =  async (data , anio, totalMes, totalGeneral) =>{
   for (let i = 0; i < 12; i++) {
     totalRow[i + 1] = totalMes[i];
   }
+  
   totalRow.total_socio = totalGeneral;
-  // rows.push(totalRow);
+  
 
   // Agregar título
   doc.setFontSize(14);
