@@ -61,10 +61,6 @@ const imprimirPdf =  async () =>{
 
   let totalGeneral = document.getElementById('totalGeneral').value;
 
-  console.log(data);
-  console.log(totalMes[0]);
-  console.log(totalGeneral)
-
   // Crear instancia de jsPDF
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
