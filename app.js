@@ -340,7 +340,6 @@ document.getElementById("btnReporteMensual").addEventListener("click", () => {
   cargarReporteMensual(anio);
 });
 
-
 async function cargarReporteMensual(anio) {
   const res = await fetch(`${API_URL}/reporte-mensual/${anio}`);
   const data = await res.json();
