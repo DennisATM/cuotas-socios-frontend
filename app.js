@@ -218,6 +218,21 @@ document.getElementById("btnActualizarPagoSocio").addEventListener("click", asyn
 
 })
 
+const eliminarPago = async (id) => {
+  if (!confirm("¿Seguro que deseas eliminar este pago?")) return;
+  const res = await fetch(`${API_URL}/pagos/${id}`, { method: "DELETE" });
+  const data = await res.json();  
+  if (res.ok) {
+    alert(data.mensaje);
+      cargarReporteTotal(); // refrescar lista
+      cargarReporteSocios();    
+  } else {
+    alert(data.error || "Error al eliminar pago");  
+      cargarReporteTotal();
+      cargarReporteSocios();  
+  }
+}
+
 const abrirModalEditarCuota = async (id, socio_id, mes, anio, cuota) => {
   console.log(await id, socio_id, mes, anio, cuota);
   document.getElementById('editIdSocioPago').value = socio_id;
