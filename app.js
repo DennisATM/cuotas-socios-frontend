@@ -157,10 +157,10 @@ document.getElementById("btnAgregarSocio").addEventListener("click", async () =>
 document.getElementById("btnPagoSocio").addEventListener("click", async () => {
   const socio_id = document.getElementById("idSocioPago").value;
   const monto = document.getElementById("montoPago").value;
-  const mes =  document.getElementById("mesPago").value;
+  const meses = Array.from(document.getElementById("mesesPago").selectedOptions).map(o => o.value);
   const anio = document.getElementById("anioPago").value;
 
-  if (!mes || !anio || !monto) return alert("Seleccione monto válido, mes y año");
+  if (!meses || !anio || !monto) return alert("Seleccione monto válido, mes y año");
 
   if(Number(anio)<2020 || Number(anio)>2030) return alert("El año ingresado no es válido, debe ser un número entre 2020 y 2030");
 
@@ -169,7 +169,7 @@ document.getElementById("btnPagoSocio").addEventListener("click", async () => {
   await fetch(`${API_URL}/pagos`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ socio_id, monto, mes, anio })  
+    body: JSON.stringify({ socio_id, monto, meses, anio })  
   }).then(res => {
     if (!res.ok) {
       return res.json().then(err => alert(err.error));
@@ -179,7 +179,7 @@ document.getElementById("btnPagoSocio").addEventListener("click", async () => {
   });
 
   document.getElementById("montoPago").value = "";
-  document.getElementById("mesPago").value = "";
+  document.getElementById("mesesPago").value = "";
   document.getElementById("anioPago").value = "2025";
   cargarReporteTotal();
   cargarReporteSocios();
